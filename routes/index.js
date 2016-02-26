@@ -13,36 +13,50 @@ router.post('/drink', function (req, res) {
     var id = getUUID(req);
 
     if (isRegistered(id)) {
-        var drinksLeft = drink(id);
 
-        if (drinksLeft < 0) {
+        if (getDrinksLeft(id) === 0) {
             res.send('You are out of drinks, friendo.');
             return;
         }
 
-        if (drinksLeft === 0) {
+        drink(id);
+
+        if (getDrinksLeft(id) === 0) {
             res.send('This is your last drink. (You can refill *wink wink*)');
             return;
         }
 
-        res.send('You have ' + db[id] + ' drinks left. Enjoy!');
+        res.send(logDrinksLeft(id));
     } else {
-        db[id] = STARTING_DRINKS;
+        fillUp(id);
         drink(id);
-        res.send('You have ' + db[id] + ' drinks left. Enjoy!');
+        res.send(ologDrinksLeft(id));
     }
 });
 
 router.post('/refill', function (req, res) {
-    res.send('REUP!');
+
+    var id = getUUID(req);
+
+    fillUp(id);
+
+    res.send(logDrinksLeft(id));
 });
+
+function getDrinksLeft(id) {
+    return db[id];
+}
 
 function getUUID(req) {
     return req.body.uuid;
 }
 
 function fillUp(id) {
-    db[id] = STARTING_DRINKS;
+    if (isRegistered(id)) {
+        db[id] += STARTING_DRINKS;
+    } else {
+        db[id] = STARTING_DRINKS;
+    }
 }
 
 function isRegistered(id) {
@@ -50,8 +64,14 @@ function isRegistered(id) {
 }
 
 function drink(id) {
-    db[id]--;
+    if (db[id] > 0) {
+        db[id]--;
+    }
     return db[id];
+}
+
+function logDrinksLeft(id) {
+    return 'Enjoy your drink! You have ' + db[id] + ' drink(s) left.';
 }
 
 module.exports = router;
