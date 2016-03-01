@@ -15,14 +15,14 @@ router.post('/drink', function (req, res) {
     if (isRegistered(id)) {
 
         if (getDrinksLeft(id) === 0) {
-            res.send('You are out of drinks, friendo.');
+            res.send('You are out of drinks. Wait for a refill (1 per hour)');
             return;
         }
 
         drink(id);
 
         if (getDrinksLeft(id) === 0) {
-            res.send('This is your last drink. (You can refill *wink wink*)');
+            res.send('This is your last drink.');
             return;
         }
 
@@ -40,7 +40,7 @@ router.post('/refill', function (req, res) {
 
     fillUp(id);
 
-    res.send(logDrinksLeft(id));
+    res.send(`You now have ${db[id]} drinks on your card`);
 });
 
 function getDrinksLeft(id) {
