@@ -5,10 +5,6 @@ var STARTING_DRINKS = 3;
 
 var db = {};
 
-router.get('/', function (req, res, next) {
-    res.send('This is not the endpoint you are looking for.');
-});
-
 router.post('/drink', function (req, res) {
     var id = getUUID(req);
 
@@ -30,7 +26,7 @@ router.post('/drink', function (req, res) {
     } else {
         fillUp(id);
         drink(id);
-        res.send(ologDrinksLeft(id));
+        res.send(logDrinksLeft(id));
     }
 });
 
