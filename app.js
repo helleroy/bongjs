@@ -4,6 +4,7 @@ var path = require('path');
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
+var nfcRepo = require('./repository/nfc-repository');
 var drinkRepo = require('./repository/drink-repository');
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -13,21 +14,27 @@ io.on('connection', function (socket) {
     console.log('Socket connected.');
 
     socket.on('drink', function (data, fn) {
-        drinkRepo
-            .drink(data.id)
-            .catch(function (e) {
-                fn(e);
-            })
-            .then(function (user) {
-                fn(user);
+        nfcRepo.readUUID()
+            .then(function (uuid) {
+                drinkRepo
+                    .drink(uuid)
+                    .catch(function (e) {
+                        fn(e);
+                    })
+                    .then(function (user) {
+                        fn(user);
+                    });
             });
     });
 
     socket.on('refill', function (data, fn) {
-        drinkRepo
-            .refill(data.id)
-            .then(function (user) {
-                fn(user);
+        nfcRepo.readUUID()
+            .then(function (uuid) {
+                drinkRepo
+                    .refill(uuid)
+                    .then(function (user) {
+                        fn(user);
+                    });
             });
     });
 });
