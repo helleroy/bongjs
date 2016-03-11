@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BongJS</title>
+</head>
+<body>
+
+</body>
+<div>
+    <button id="drinkButton" onclick="drink()">Drink</button>
+    <button id="refillButton" onclick="refill()">Refill</button>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://localhost:3000');
+    socket.on('connect', function () {
+        console.log('connected! :D');
+    });
+
+    function drink() {
+        socket.emit('drink', {id: 'Bubba'}, function (data) {
+            console.log(data);
+        });
+    }
+
+    function refill() {
+        socket.emit('refill', {id: 'Bubba'}, function (data) {
+            console.log(data);
+        });
+    }
+</script>
+</html>

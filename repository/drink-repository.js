@@ -1,15 +1,10 @@
-var express = require('express');
 var Firebase = require('firebase');
-
-var router = express.Router();
 var firebaseRef = new Firebase('https://glowing-torch-1751.firebaseio.com/');
 
 var STARTING_DRINKS = 3;
 
-router.post('/drink', function (req, res) {
-    var id = req.body.uuid;
-
-    getUser(id)
+function drink(id) {
+    return getUser(id)
         .then(function (user) {
             if (user === null) {
                 return newUser(id)
@@ -28,18 +23,13 @@ router.post('/drink', function (req, res) {
 
             return updateUser(update, id);
         })
-        .catch(function (e) {
-            res.send(e);
-        })
         .then(function (user) {
-            res.send(user)
+            return user;
         });
-});
+}
 
-router.post('/refill', function (req, res) {
-    var id = req.body.uuid;
-
-    getUser(id)
+function refill(id) {
+    return getUser(id)
         .then(function (user) {
             if (user === null) {
                 return newUser(id);
@@ -53,9 +43,9 @@ router.post('/refill', function (req, res) {
             return updateUser(update, id);
         })
         .then(function (user) {
-            res.send(user);
+            return user;
         });
-});
+}
 
 function updateUser(user, id) {
     return firebaseRef.child(`user/${id}`).update(user)
@@ -78,4 +68,4 @@ function getUser(id) {
     });
 }
 
-module.exports = router;
+module.exports = {drink: drink, refill: refill};
